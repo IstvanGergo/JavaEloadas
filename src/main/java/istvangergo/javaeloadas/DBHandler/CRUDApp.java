@@ -7,7 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class CRUDApp {
-    private static final String URL = "jdbc:sqlite:fajok.db";
+    //TODO: Create CRUD functions
+    private static final String URL = "jdbc:sqlitec:/adatok/adatok.db";
     public Connection connect() {
         try {
             return DriverManager.getConnection(URL);
