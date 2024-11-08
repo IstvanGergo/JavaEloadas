@@ -19,7 +19,7 @@ public class MainApp extends Application {
     @FXML
     protected void OpenThreadHandling(){
         try{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("ThreadWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Views/ThreadWindow.fxml"));
         Parent root = loader.load();
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
@@ -32,7 +32,7 @@ public class MainApp extends Application {
     @FXML
     protected void OpenCRUDApp(){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("CRUDAppWindow.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Views/CRUDAppWindow.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
@@ -48,7 +48,7 @@ public class MainApp extends Application {
         primaryStage.setTitle("JavaFX App");
 
         // Load FXML layout
-        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("Views/main.fxml"));
 
         // Set the main scene
         Scene mainScene = new Scene(root, 300, 200);

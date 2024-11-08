@@ -32,14 +32,14 @@ public class ThreadWindow {
     @FXML
     protected void onFirstButtonClick() {
         if(thread2 == null || !thread2.isAlive()){
-            thread2 = new ThreadClass(1000, "Second", secondText);
+            thread2 = new ThreadClass(1000, "First", secondText);
             thread2.start();
         }
     }
     @FXML
     protected void onSecondButtonClick() {
         if(thread3 == null || !thread3.isAlive()){
-            thread3 = new ThreadClass(2000, "Third", thirdText);
+            thread3 = new ThreadClass(2000, "Second", thirdText);
             thread3.start();
         }
     }
