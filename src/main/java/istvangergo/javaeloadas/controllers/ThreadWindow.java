@@ -1,27 +1,43 @@
-package istvangergo.javaeloadas;
+package istvangergo.javaeloadas.controllers;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 public class ThreadWindow {
+    public VBox threadLayout;
+    @FXML
+    private Button firstButton;
+    @FXML
+    private Button secondButton;
+    private Stage stage;
     @FXML
     private Label secondText;
     @FXML
     private Label thirdText;
+
     private ThreadClass thread2 = null;
     private ThreadClass thread3 = null;
-    @FXML
 
-    protected void onSecondButtonClick() {
+    @FXML
+    protected void onFirstButtonClick() {
         if(thread2 == null || !thread2.isAlive()){
             thread2 = new ThreadClass(1000, "Second", secondText);
             thread2.start();
         }
     }
     @FXML
-    protected void onThirdButtonClick() {
+    protected void onSecondButtonClick() {
         if(thread3 == null || !thread3.isAlive()){
             thread3 = new ThreadClass(2000, "Third", thirdText);
             thread3.start();
