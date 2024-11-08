@@ -1,13 +1,11 @@
-package istvangergo.javaeloadas.Models;
-
+package istvangergo.javaeloadas.Model;
 import javax.persistence.*;
-
 @Entity
-@Table(name = "Category")
-public class Category {
+@Table(name = "Value")
+public class Value {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    private String description;
 }

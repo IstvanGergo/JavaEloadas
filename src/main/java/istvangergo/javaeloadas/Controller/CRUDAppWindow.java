@@ -1,5 +1,6 @@
-package istvangergo.javaeloadas.controllers;
+package istvangergo.javaeloadas.Controller;
 
+import istvangergo.javaeloadas.DBHandler.CRUDApp;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +27,8 @@ public class CRUDAppWindow {
             stage.setScene(new Scene(crudLayout, 300, 300));
             items = FXCollections.observableArrayList();
             listView = new ListView<>(items);
+            CRUDApp dbhandler = new CRUDApp();
+            dbhandler.connect();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
