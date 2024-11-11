@@ -4,7 +4,10 @@
         "http://www.hibernate.org/dtd/hibernate-configuration">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:sqlite:/c:/adatbazis/feladat.db</property>
-        <mapping class="org.example.Dolgozó"/>
+        <property name="connection.url">jdbc:sqlite:/c:/adatok/adatok.db</property>
+        <mapping class="istvangergo.javaeloadas.Model.Animal"/>
+        <mapping class="istvangergo.javaeloadas.Model.Value"/>
+        <mapping class="istvangergo.javaeloadas.Model.Category"/>
+
     </session-factory>
 </hibernate-configuration>

@@ -20,8 +20,18 @@ public class Animal {
     @JoinColumn(name = "CategoryID")
     private Category category;
 
-    public Value getValue() {
-        return value;
+    public Animal(int id, String name,  int year, Value value, Category category) {
+        this.id = id;
+        this.name = name;
+        this.year = year;
+        this.value = value;
+        this.category = category;
+    }
+
+    public Animal() {}
+
+    public Integer getValue() {
+        return value.getId();
     }
 
     public Integer getId() {
@@ -36,8 +46,8 @@ public class Animal {
         return year;
     }
 
-    public Category getCategory() {
-        return category;
+    public Integer getCategory() {
+        return category.getId();
     }
 
     public void setId(Integer id) {

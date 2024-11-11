@@ -10,11 +10,6 @@ import javafx.stage.Stage;
 public class ThreadWindow {
     public VBox threadLayout;
     @FXML
-    private Button firstButton;
-    @FXML
-    private Button secondButton;
-    private Stage stage;
-    @FXML
     private Label secondText;
     @FXML
     private Label thirdText;
