@@ -32,8 +32,6 @@
 
     <Tab text="Olvas2" closable="false">
         <VBox spacing="15.0" alignment="CENTER">
-            <GridPane hgap="10" vgap="10">
-            </GridPane>
                 <TextField fx:id="animalName" promptText="Állat neve tartalmazza:" prefWidth="200"/>
                 <RadioButton fx:id="isYearAvailable" text="Csak évszámmal rendelkezők listázása"/>
                 <Label text="Természetvédelmi érték alapján szűrés:"/>
@@ -50,7 +48,7 @@
                         <String fx:value="madarak" />
                         <String fx:value="kétéltűek" />
                         <String fx:value="puhatestűek" />
-                        <String fx:value="hűllők" />
+                        <String fx:value="hüllők" />
                         <String fx:value="emlősök" />
                         <String fx:value="ízeltlábúak" />
                     </FXCollections>
@@ -71,18 +69,26 @@
 
     <Tab text="Ír" closable="false">
         <VBox spacing="15.0" alignment="CENTER">
-            <GridPane hgap="10" vgap="10">
-                <!-- Form elements for new record addition -->
-            </GridPane>
+                <Label text="Animal Name"/>
+                <TextField fx:id="nameToInsert" promptText="Enter animal name"/>
+                <Label text="Value"/>
+                <ComboBox fx:id="valueToInsert">
+                </ComboBox>
+
+                <Label text="Year"/>
+                <TextField fx:id="yearToInsert" promptText="Enter year" />
+
+                <Label text="Category"/>
+                <ComboBox fx:id="categoryToInsert">
+                </ComboBox>
             <Button text="Submit" onAction="#insert"/>
         </VBox>
     </Tab>
 
     <Tab text="Módosít" closable="false">
         <VBox spacing="15.0" alignment="CENTER">
-            <GridPane hgap="10" vgap="10">
-                <!-- Form elements for updating a record -->
-            </GridPane>
+            <ComboBox fx:id="animalIDs">
+            </ComboBox>
             <Button text="Update" onAction="#updateRecord"/>
         </VBox>
     </Tab>

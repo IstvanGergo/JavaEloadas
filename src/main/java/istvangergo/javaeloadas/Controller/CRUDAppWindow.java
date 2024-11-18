@@ -1,19 +1,12 @@
 package istvangergo.javaeloadas.Controller;
 
 import istvangergo.javaeloadas.DBHandler.CRUDApp;
-import istvangergo.javaeloadas.Model.Animal;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import istvangergo.javaeloadas.Model.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,9 +57,35 @@ public class CRUDAppWindow {
     @FXML
     private ComboBox animalCategory;
 
+    /* insert Table*/
+    @FXML
+    private TextField nameToInsert;
+    @FXML
+    private ComboBox valueToInsert;
+    @FXML
+    private TextField yearToInsert;
+    @FXML
+    private ComboBox categoryToInsert;
 
+    /* modify Table */
+    @FXML
+    private ComboBox animalIDs;
     public CRUDAppWindow(){
         crudApp = new CRUDApp();
+    }
+
+    private void populateValueComboBox() {
+        List<Value> values = crudApp.getValues();
+        valueToInsert.getItems().addAll(values);
+    }
+
+    private void populateCategoryComboBox() {
+        List<Category> categories = crudApp.getCategories();
+        categoryToInsert.getItems().addAll(categories);
+    }
+    private void populateAnimalIDs(){
+        List<Animal> animals = crudApp.getAll();
+        animalIDs.getItems().addAll(animals);
     }
 
     private void tableSetter(TableColumn<Animal, Integer> idColumnFiltered,
@@ -84,12 +103,16 @@ public class CRUDAppWindow {
         tableSetter(idColumn, nameColumn, yearColumn, categoryColumn, valueColumn);
         tableSetter(idColumnFiltered, nameColumnFiltered, yearColumnFiltered, categoryColumnFiltered, valueColumnFiltered);
         valueCheckBoxes = List.of(oneHundredThousand,twoHundredFiftyThousand,halfMillion,oneMillion);
+        populateValueComboBox();
+        populateCategoryComboBox();
+        populateAnimalIDs();
     }
 
     @FXML
     protected void insert(){
-        List<Animal> animalList =  crudApp.getAll();
-        animalTableView.getItems().setAll(animalList);
+       Value selectedValue = (Value) valueToInsert.getValue();
+       Category selectedCategory = (Category) categoryToInsert.getValue();
+       crudApp.insert(nameToInsert.getText(), selectedValue.getId(), Integer.parseInt(yearToInsert.getText()), selectedCategory.getId());
     }
     @FXML
     protected void updateRecord(){

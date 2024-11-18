@@ -29,7 +29,10 @@ public class Category {
         Category category = (Category) obj;
         return Objects.equals(id, category.id) && Objects.equals(name, category.name);
     }
-
+    @Override
+    public String toString() {
+        return name;
+    }
     public Integer getId() {
         return id;
     }

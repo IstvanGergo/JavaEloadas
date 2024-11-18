@@ -20,6 +20,11 @@ public class Animal {
     @JoinColumn(name = "CategoryID")
     private Category category;
 
+    @Override
+    public String toString() {
+        return id.toString();
+    }
+
     public Animal(int id, String name,  int year, Value value, Category category) {
         this.id = id;
         this.name = name;

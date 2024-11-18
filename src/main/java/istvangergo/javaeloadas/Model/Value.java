@@ -29,7 +29,10 @@ public class Value {
         Value value = (Value) obj;
         return Objects.equals(id, value.id) && Objects.equals(forint, value.forint);
     }
-
+    @Override
+    public String toString() {
+        return forint.toString();
+    }
     public Integer getId() {
         return id;
     }

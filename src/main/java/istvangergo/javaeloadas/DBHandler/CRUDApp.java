@@ -65,9 +65,10 @@ public class CRUDApp {
                 query.append(" AND Animal.Name LIKE '%").append(_animalNameContains).append("%'");
             }
             if(_values != null && !_values.isEmpty()){
+                query.append(" AND Value.Forint = ").append(_values.get(0));
                 for (Integer value : _values) {
-                    query.append(" AND Value.Forint = ").append(value);
-                }
+                        query.append(" OR Value.Forint = ").append(value);
+                    }
             }
             if(_category != null && !_category.equals("Ne szűrjön")){
                 query.append(" AND Category.CategoryName LIKE '%").append(_category).append("%'");
@@ -83,14 +84,47 @@ public class CRUDApp {
         return null;
     }
 
-    public boolean insert(Animal animal) {
+
+    public List<Value> getValues() {
+        try {
+            connect();
+            List<Value> values = new ArrayList<>();
+            ResultSet rs = statement.executeQuery("SELECT * FROM Value");
+            while (rs.next()) {
+                Value value = new Value(rs.getInt("ValueID"), rs.getInt("Forint")); // Assuming 'name' is a column
+                values.add(value);
+            }
+            return values;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Category> getCategories() {
+        try {
+            connect();
+            List<Category> categories = new ArrayList<>();
+            ResultSet rs = statement.executeQuery("SELECT * FROM Category");
+            while (rs.next()) {
+                Category category = new Category(rs.getInt("CategoryID"), rs.getString("CategoryName")); // Assuming 'name' is a column
+                categories.add(category);
+            }
+            return categories;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean insert(String _name, Integer _valueID, Integer _year, Integer _categoryID) {
         try {
             connect();
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Animal( Name, ValueID, Year, CategoryID) VALUES (?,?,?,?)");
-            preparedStatement.setString(1, animal.getName());
-            preparedStatement.setInt(2, animal.getValue());
-            preparedStatement.setInt(3, animal.getYear());
-            preparedStatement.setInt(4, animal.getCategory());
+            preparedStatement.setString(1, _name);
+            preparedStatement.setInt(2, _valueID);
+            preparedStatement.setInt(3, _year);
+            preparedStatement.setInt(4, _categoryID);
             int rows = preparedStatement.executeUpdate();
             return rows == 1;
         } catch (SQLException e) {
