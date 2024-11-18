@@ -49,7 +49,13 @@ public class Animal {
     public Integer getCategory() {
         return category.getId();
     }
+    public String getCategoryName() {
+        return category != null ? category.getName() : "";
+    }
 
+    public int getForint() {
+        return value != null ? value.getForint() : 0;
+    }
     public void setId(Integer id) {
         this.id = id;
     }

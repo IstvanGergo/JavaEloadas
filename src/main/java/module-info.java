@@ -6,7 +6,8 @@ module istvangergo.javaeloadas {
 
 
     opens istvangergo.javaeloadas to javafx.fxml;
+    opens istvangergo.javaeloadas.Model to javafx.fxml, javafx.base;
+    opens istvangergo.javaeloadas.Controller to javafx.fxml;
     exports istvangergo.javaeloadas;
     exports istvangergo.javaeloadas.Controller;
-    opens istvangergo.javaeloadas.Controller to javafx.fxml;
 }
