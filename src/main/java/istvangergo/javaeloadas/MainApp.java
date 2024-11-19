@@ -42,7 +42,19 @@ public class MainApp extends Application {
             e.printStackTrace();
         }
     }
-
+    @FXML
+    protected void OpenSOAPClient(){
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("View/SOAPClientWindow.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("JavaFX App");
