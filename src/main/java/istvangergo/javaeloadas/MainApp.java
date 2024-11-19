@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainApp extends Application {
+    public Button oandaButton;
+    public Button soapClientButton;
     @FXML
     private Button threadHandlingButton;
 
@@ -46,6 +48,19 @@ public class MainApp extends Application {
     protected void OpenSOAPClient(){
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("View/SOAPClientWindow.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    protected void OpenForexMenu(){
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("View/OandaWindow.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));

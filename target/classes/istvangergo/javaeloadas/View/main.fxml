@@ -8,4 +8,6 @@
     <Button fx:id="threadHandlingButton" text="Thread Handling" onAction="#OpenThreadHandling"/>
 
     <Button fx:id="crudAppButton" text="CRUD App" onAction="#OpenCRUDApp"/>
+    <Button fx:id="soapClientButton" text="SOAP Client" onAction="#OpenSOAPClient"/>
+    <Button fx:id="oandaButton" text="SOAP Client" onAction="#OpenForexMenu"/>
 </VBox>

@@ -46,8 +46,6 @@ public class XMLParser {
         }
         return list;
     }
-    public static List<String> getAllCurrencies(){
 
-    }
 
 }
