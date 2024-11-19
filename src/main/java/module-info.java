@@ -3,6 +3,7 @@ module istvangergo.javaeloadas {
     requires javafx.fxml;
     requires java.persistence;
     requires java.sql;
+    requires net.bytebuddy;
 
 
     opens istvangergo.javaeloadas to javafx.fxml;

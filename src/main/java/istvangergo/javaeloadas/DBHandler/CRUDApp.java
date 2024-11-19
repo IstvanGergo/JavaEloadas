@@ -2,6 +2,7 @@ package istvangergo.javaeloadas.DBHandler;
 
 import istvangergo.javaeloadas.Model.*;
 import javafx.beans.property.BooleanProperty;
+import net.bytebuddy.dynamic.scaffold.MethodRegistry;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class CRUDApp {
                         query.append(" OR Value.Forint = ").append(value);
                     }
             }
-            if(_category != null && !_category.equals("Ne szűrjön")){
+            if(_category != null && !_category.isEmpty()){
                 query.append(" AND Category.CategoryName LIKE '%").append(_category).append("%'");
             }
             if(_isYearAvailable.getValue()){
@@ -83,7 +84,6 @@ public class CRUDApp {
     }
         return null;
     }
-
 
     public List<Value> getValues() {
         try {
@@ -131,5 +131,56 @@ public class CRUDApp {
             System.out.println(e.getMessage());
         }
         return false;
+    }
+    public boolean modify(Integer _id, String _name, Integer _valueID, Integer _year, Integer _categoryID) {
+        try {
+            connect();
+            StringBuilder query = new StringBuilder("UPDATE Animal SET ");
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Animal SET Name = ?, ValueID = ?,Year = ?, CategoryID = ? WHERE ID = ?");
+            if(_name != null && !_name.isEmpty()){
+                preparedStatement.setString(1, _name);
+                query.append(" Animal.Name =").append(_name);
+            }
+            if(_valueID != 0){
+                preparedStatement.setInt(2, _valueID);
+                query.append(" Animal.ValueID =").append(_valueID);
+            }
+            if(_year != 0){
+                preparedStatement.setInt(3, _year);
+                query.append(" Animal.Year =").append(_year);
+            }
+            if(_categoryID != 0){
+                preparedStatement.setInt(4, _categoryID);
+                query.append(" Animal.CategoryID =").append(_categoryID);
+            }
+            preparedStatement.setInt(5, _id);
+            query.append(" WHERE ID = ").append(_id);
+            int rows = preparedStatement.executeUpdate();
+            return rows == 1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+    public Animal delete(Integer _id) {
+        try{
+        PreparedStatement preparedStatement = connection.prepareStatement("Select Animal.ID, Animal.Name, Year, Category.CategoryID, CategoryName, Value.ValueID, Value.Forint\n" +
+                "from Animal\n" +
+                "JOIN Category on Animal.CategoryID = Category.CategoryID\n" +
+                "JOIN Value on Animal.ValueID = Value.ValueID\n" +
+                "where Animal.ID = ? ");
+        preparedStatement.setInt(1, _id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        List<Animal> animal = getTableContents(resultSet);
+        if(!animal.isEmpty()){
+            PreparedStatement deletionStatement = connection.prepareStatement("DELETE FROM Animal WHERE ID = ?");
+            deletionStatement.setInt(1, _id);
+            deletionStatement.executeUpdate();
+            return animal.get(0);
+        }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 }

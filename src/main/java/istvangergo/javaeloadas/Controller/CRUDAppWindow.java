@@ -44,6 +44,9 @@ public class CRUDAppWindow {
     private TextField animalName;
     @FXML
     private RadioButton isYearAvailable;
+
+    @FXML
+    private ComboBox animalCategory;
     @FXML
     private CheckBox oneHundredThousand;
     @FXML
@@ -54,8 +57,6 @@ public class CRUDAppWindow {
     private CheckBox oneMillion;
     @FXML
     private List<CheckBox> valueCheckBoxes;
-    @FXML
-    private ComboBox animalCategory;
 
     /* insert Table*/
     @FXML
@@ -70,6 +71,19 @@ public class CRUDAppWindow {
     /* modify Table */
     @FXML
     private ComboBox animalIDs;
+    @FXML
+    private TextField modifiedName;
+    @FXML
+    private TextField modifiedYear;
+    @FXML
+    private ComboBox  modifiedValue;
+    @FXML
+    private ComboBox  modifiedCategory;
+
+    /* delete Table*/
+    @FXML
+    private ComboBox deleteIDs;
+
     public CRUDAppWindow(){
         crudApp = new CRUDApp();
     }
@@ -77,15 +91,18 @@ public class CRUDAppWindow {
     private void populateValueComboBox() {
         List<Value> values = crudApp.getValues();
         valueToInsert.getItems().addAll(values);
+        modifiedValue.getItems().addAll(values);
     }
 
     private void populateCategoryComboBox() {
         List<Category> categories = crudApp.getCategories();
         categoryToInsert.getItems().addAll(categories);
+        modifiedCategory.getItems().addAll(categories);
     }
     private void populateAnimalIDs(){
         List<Animal> animals = crudApp.getAll();
         animalIDs.getItems().addAll(animals);
+        deleteIDs.getItems().addAll(animals);
     }
 
     private void tableSetter(TableColumn<Animal, Integer> idColumnFiltered,
@@ -102,7 +119,7 @@ public class CRUDAppWindow {
     public void initialize(){
         tableSetter(idColumn, nameColumn, yearColumn, categoryColumn, valueColumn);
         tableSetter(idColumnFiltered, nameColumnFiltered, yearColumnFiltered, categoryColumnFiltered, valueColumnFiltered);
-        valueCheckBoxes = List.of(oneHundredThousand,twoHundredFiftyThousand,halfMillion,oneMillion);
+        valueCheckBoxes = List.of(oneHundredThousand, twoHundredFiftyThousand, halfMillion, oneMillion);
         populateValueComboBox();
         populateCategoryComboBox();
         populateAnimalIDs();
@@ -112,17 +129,62 @@ public class CRUDAppWindow {
     protected void insert(){
        Value selectedValue = (Value) valueToInsert.getValue();
        Category selectedCategory = (Category) categoryToInsert.getValue();
-       crudApp.insert(nameToInsert.getText(), selectedValue.getId(), Integer.parseInt(yearToInsert.getText()), selectedCategory.getId());
+       boolean success = crudApp.insert(nameToInsert.getText(), selectedValue.getId(), Integer.parseInt(yearToInsert.getText()), selectedCategory.getId());
+        if (success) {
+            // Show success message
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Sikeres írás");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText("Állat sikeresen hozzáadva!");
+            successAlert.showAndWait();
+        } else {
+            // Show failure message
+            Alert failureAlert = new Alert(Alert.AlertType.WARNING);
+            failureAlert.setTitle("Sikertelen írás");
+            failureAlert.setHeaderText(null);
+            failureAlert.setContentText("Már létezik ilyen nevű állat az adatbázisban!");
+            failureAlert.showAndWait();
+        }
     }
     @FXML
     protected void updateRecord(){
-        List<Animal> animalList =  crudApp.getAll();
-        animalTableView.getItems().setAll(animalList);
+        Value selectedValue = (Value) modifiedValue.getValue();
+        Category selectedCategory = (Category) modifiedCategory.getValue();
+        Animal selectedAnimal = (Animal) animalIDs.getValue();
+        boolean success = crudApp.modify(selectedAnimal.getId(),modifiedName.getText(),selectedValue.getId(),Integer.parseInt(modifiedYear.getText()),selectedCategory.getId());
+        if (success) {
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Sikeres módosítás");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText("Állat sikeresen módosítva!");
+            successAlert.showAndWait();
+        } else {
+            Alert failureAlert = new Alert(Alert.AlertType.WARNING);
+            failureAlert.setTitle("Sikertelen módosítás");
+            failureAlert.setHeaderText(null);
+            failureAlert.setContentText("Ilyen névvel létezik már állat!");
+            failureAlert.showAndWait();
+        }
     }
     @FXML
     protected void deleteRecord(){
-        List<Animal> animalList =  crudApp.getAll();
-        animalTableView.getItems().setAll(animalList);
+        Animal selectedAnimal = (Animal) deleteIDs.getValue();
+        Animal deletedAnimal = crudApp.delete(selectedAnimal.getId());
+        if(deletedAnimal != null){
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Sikeres törlés");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText(deletedAnimal.getName() + " nevű állat sikeresen törölve");
+            successAlert.showAndWait();
+            deleteIDs.getItems().remove(deletedAnimal);
+        }
+        else{
+            Alert failureAlert = new Alert(Alert.AlertType.WARNING);
+            failureAlert.setTitle("Sikertelen törlés");
+            failureAlert.setHeaderText(null);
+            failureAlert.setContentText("Törlés nem sikerült!");
+            failureAlert.showAndWait();
+        }
     }
     @FXML
     protected void getFiltered(){
