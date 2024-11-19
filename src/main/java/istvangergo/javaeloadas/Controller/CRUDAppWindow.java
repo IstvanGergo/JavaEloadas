@@ -124,7 +124,12 @@ public class CRUDAppWindow {
         populateCategoryComboBox();
         populateAnimalIDs();
     }
-
+    @FXML
+    public void updateAnimalIDs(){
+        populateAnimalIDs();
+        // TODO: Implement proper reset on ComboBox
+        animalIDs.cancelEdit();
+    }
     @FXML
     protected void insert(){
        Value selectedValue = (Value) valueToInsert.getValue();
@@ -151,7 +156,7 @@ public class CRUDAppWindow {
         Value selectedValue = (Value) modifiedValue.getValue();
         Category selectedCategory = (Category) modifiedCategory.getValue();
         Animal selectedAnimal = (Animal) animalIDs.getValue();
-        boolean success = crudApp.modify(selectedAnimal.getId(),modifiedName.getText(),selectedValue.getId(),Integer.parseInt(modifiedYear.getText()),selectedCategory.getId());
+        boolean success = crudApp.modify(selectedAnimal.getId(),modifiedName.getText(),selectedValue,modifiedYear.getText(),selectedCategory);
         if (success) {
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
             successAlert.setTitle("Sikeres módosítás");

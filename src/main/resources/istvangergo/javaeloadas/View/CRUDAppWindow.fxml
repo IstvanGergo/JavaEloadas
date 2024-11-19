@@ -85,7 +85,7 @@
         </VBox>
     </Tab>
 
-    <Tab text="Módosít" closable="false">
+    <Tab text="Módosít" closable="false" onSelectionChanged="#updateAnimalIDs">
         <VBox spacing="15.0" alignment="CENTER">
             <Label text="Állat ID-je"/>
             <ComboBox fx:id="animalIDs">

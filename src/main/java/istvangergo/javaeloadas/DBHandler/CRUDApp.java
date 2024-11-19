@@ -132,30 +132,24 @@ public class CRUDApp {
         }
         return false;
     }
-    public boolean modify(Integer _id, String _name, Integer _valueID, Integer _year, Integer _categoryID) {
+    public boolean modify(Integer _id, String _name, Value _value, String _year, Category _category) {
         try {
             connect();
             StringBuilder query = new StringBuilder("UPDATE Animal SET ");
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Animal SET Name = ?, ValueID = ?,Year = ?, CategoryID = ? WHERE ID = ?");
             if(_name != null && !_name.isEmpty()){
-                preparedStatement.setString(1, _name);
-                query.append(" Animal.Name =").append(_name);
+                query.append(" Name = \"").append(_name).append("\"");
             }
-            if(_valueID != 0){
-                preparedStatement.setInt(2, _valueID);
-                query.append(" Animal.ValueID =").append(_valueID);
+            if(_value != null){
+                query.append(" ValueID =").append(_value.getId());
             }
-            if(_year != 0){
-                preparedStatement.setInt(3, _year);
-                query.append(" Animal.Year =").append(_year);
+            if(!_year.isEmpty()){
+                query.append(" Year =").append(_year);
             }
-            if(_categoryID != 0){
-                preparedStatement.setInt(4, _categoryID);
-                query.append(" Animal.CategoryID =").append(_categoryID);
+            if(_category != null){
+                query.append(" CategoryID =").append(_category.getId());
             }
-            preparedStatement.setInt(5, _id);
             query.append(" WHERE ID = ").append(_id);
-            int rows = preparedStatement.executeUpdate();
+            Integer rows = statement.executeUpdate(query.toString());
             return rows == 1;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
