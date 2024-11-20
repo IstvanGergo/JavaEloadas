@@ -8,16 +8,60 @@
          fx:controller="istvangergo.javaeloadas.Controller.OandaWindow"
          prefHeight="400.0" prefWidth="600.0">
     <Tab text="Számlainformációk" closable="false">
-        <VBox>
+        <VBox spacing="15.0" alignment="CENTER">
             <Button onAction="#getAccountDetails" text="Számlaadatok kiírása"/>
             <TextArea fx:id="accountDetails"/>
         </VBox>
     </Tab>
     <Tab text="Aktuális Árak" closable="false">
-        <VBox>
-            <ComboBox fx:id="currencyPairs" promptText="Devizapár választása"/>
+        <VBox spacing="15.0" alignment="CENTER">
+            <ComboBox fx:id="currencyPairsActual" promptText="Devizapár választása"/>
             <Button onAction="#getCurrentPrices" text="Aktuális árak kiírása"/>
             <TextArea fx:id="currentPrices"/>
+        </VBox>
+    </Tab>
+    <Tab text="Historikus Árak" closable="false">
+        <VBox spacing="15.0" alignment="CENTER">
+            <ComboBox fx:id="currencyPairsHistoric" promptText="Devizapár választása"/>
+            <DatePicker fx:id="historicFrom" promptText="Nyitó dátum"/>
+            <DatePicker fx:id="historicTo" promptText="Záró dátum" />
+            <Button onAction="#getHistoricData" text="Historikus árak kiírása"/>
+            <TableView fx:id="historicTable">
+                <columns>
+                    <TableColumn text="Dátum" fx:id="historicDate"/>
+                    <TableColumn text="Érték" fx:id="historicRate"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </Tab>
+    <Tab text="Pozíció nyitás" closable="false">
+        <VBox spacing="15.0" alignment="CENTER">
+            <ComboBox fx:id="currencyPairsOpen" promptText="Devizapár választása"/>
+            <ComboBox fx:id="amount" promptText="Mennyiség választása"/>
+            <ComboBox fx:id="sellOrBuy" promptText="Irány megadása"/>
+            <Button onAction="#onOpenPosition" text="Pozíció nyitása"/>
+            <TextArea fx:id="openTextArea"/>
+        </VBox>
+    </Tab>
+    <Tab text="Pozíció zárás" closable="false">
+        <VBox spacing="15.0" alignment="CENTER">
+            <TextField fx:id="positionID" promptText="Pozíció tradeID-je"/>
+            <Button onAction="#closePosition" text="Pozíció zárása"/>
+        </VBox>
+    </Tab>
+    <Tab text="Nyitott pozicíók" closable="false" >
+        <VBox spacing="15.0" alignment="CENTER">
+            <Button onAction="#getOpenPositions" text="Nyitott pozíciók kilistázása"/>
+            <TableView fx:id="openPositions">
+                <columns>
+                    <TableColumn text="TradeID" fx:id="openTradeID"/>
+                    <TableColumn text="Devizapár" fx:id="openInstrument"/>
+                    <TableColumn text="Nyitás ideje" fx:id="openDate" />
+                    <TableColumn text="Mennyiség" fx:id="openUnit"/>
+                    <TableColumn text="Érték" fx:id="openPrice"/>
+                    <TableColumn text="Realizálatlan Profit/Veszteség" fx:id="openUnrealizedpl"/>
+                </columns>
+            </TableView>
         </VBox>
     </Tab>
 </TabPane>

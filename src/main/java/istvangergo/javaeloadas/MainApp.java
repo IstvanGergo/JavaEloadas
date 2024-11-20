@@ -15,7 +15,6 @@ public class MainApp extends Application {
     public Button soapClientButton;
     @FXML
     private Button threadHandlingButton;
-
     @FXML
     private Button crudAppButton;
     @FXML

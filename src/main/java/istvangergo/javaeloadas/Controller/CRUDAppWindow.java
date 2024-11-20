@@ -2,7 +2,8 @@ package istvangergo.javaeloadas.Controller;
 
 import istvangergo.javaeloadas.DBHandler.CRUDApp;
 import istvangergo.javaeloadas.Model.*;
-import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CRUDAppWindow {
-    private CRUDApp crudApp;
+    private final CRUDApp crudApp;
     /* getAll Table */
     @FXML
     private TableView<Animal> animalTableView;
@@ -46,7 +47,7 @@ public class CRUDAppWindow {
     private RadioButton isYearAvailable;
 
     @FXML
-    private ComboBox animalCategory;
+    private ComboBox<String> animalCategory;
     @FXML
     private CheckBox oneHundredThousand;
     @FXML
@@ -62,27 +63,27 @@ public class CRUDAppWindow {
     @FXML
     private TextField nameToInsert;
     @FXML
-    private ComboBox valueToInsert;
+    private ComboBox<Value> valueToInsert;
     @FXML
     private TextField yearToInsert;
     @FXML
-    private ComboBox categoryToInsert;
+    private ComboBox<Category> categoryToInsert;
 
     /* modify Table */
     @FXML
-    private ComboBox animalIDs;
+    private ComboBox<Animal> animalIDs;
     @FXML
     private TextField modifiedName;
     @FXML
     private TextField modifiedYear;
     @FXML
-    private ComboBox  modifiedValue;
+    private ComboBox<Value>  modifiedValue;
     @FXML
-    private ComboBox  modifiedCategory;
+    private ComboBox<Category>  modifiedCategory;
 
     /* delete Table*/
     @FXML
-    private ComboBox deleteIDs;
+    private ComboBox<Animal> deleteIDs;
 
     public CRUDAppWindow(){
         crudApp = new CRUDApp();
@@ -100,9 +101,11 @@ public class CRUDAppWindow {
         modifiedCategory.getItems().addAll(categories);
     }
     private void populateAnimalIDs(){
-        List<Animal> animals = crudApp.getAll();
-        animalIDs.getItems().addAll(animals);
-        deleteIDs.getItems().addAll(animals);
+        ObservableList<Animal> animals = FXCollections.observableArrayList();
+        animals.clear();
+        animals = crudApp.getAll();
+        animalIDs.setItems(animals);
+        deleteIDs.setItems(animals);
     }
 
     private void tableSetter(TableColumn<Animal, Integer> idColumnFiltered,
@@ -127,13 +130,11 @@ public class CRUDAppWindow {
     @FXML
     public void updateAnimalIDs(){
         populateAnimalIDs();
-        // TODO: Implement proper reset on ComboBox
-        animalIDs.cancelEdit();
     }
     @FXML
     protected void insert(){
-       Value selectedValue = (Value) valueToInsert.getValue();
-       Category selectedCategory = (Category) categoryToInsert.getValue();
+       Value selectedValue = valueToInsert.getValue();
+       Category selectedCategory = categoryToInsert.getValue();
        boolean success = crudApp.insert(nameToInsert.getText(), selectedValue.getId(), Integer.parseInt(yearToInsert.getText()), selectedCategory.getId());
         if (success) {
             // Show success message
@@ -153,9 +154,9 @@ public class CRUDAppWindow {
     }
     @FXML
     protected void updateRecord(){
-        Value selectedValue = (Value) modifiedValue.getValue();
-        Category selectedCategory = (Category) modifiedCategory.getValue();
-        Animal selectedAnimal = (Animal) animalIDs.getValue();
+        Value selectedValue = modifiedValue.getValue();
+        Category selectedCategory = modifiedCategory.getValue();
+        Animal selectedAnimal = animalIDs.getValue();
         boolean success = crudApp.modify(selectedAnimal.getId(),modifiedName.getText(),selectedValue,modifiedYear.getText(),selectedCategory);
         if (success) {
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
@@ -173,7 +174,7 @@ public class CRUDAppWindow {
     }
     @FXML
     protected void deleteRecord(){
-        Animal selectedAnimal = (Animal) deleteIDs.getValue();
+        Animal selectedAnimal = deleteIDs.getValue();
         Animal deletedAnimal = crudApp.delete(selectedAnimal.getId());
         if(deletedAnimal != null){
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
@@ -200,11 +201,11 @@ public class CRUDAppWindow {
 
             }
         }
-        List<Animal> animalList =  crudApp.getFiltered( animalName.getText(), isYearAvailable.selectedProperty(), selectedValues, (String) animalCategory.getValue());
+        List<Animal> animalList =  crudApp.getFiltered( animalName.getText(), isYearAvailable.selectedProperty(), selectedValues, animalCategory.getValue());
         filteredTableView.getItems().setAll(animalList);
     }
 
-    public void getAll(ActionEvent actionEvent) {
+    public void getAll() {
         List<Animal> animalList =  crudApp.getAll();
         animalTableView.getItems().setAll(animalList);
     }

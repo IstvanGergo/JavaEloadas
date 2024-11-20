@@ -8,7 +8,8 @@ module istvangergo.javaeloadas {
     requires httpclient;
     requires gson;
     requires java.desktop;
-    
+    requires org.hibernate.orm.core;
+
     opens istvangergo.javaeloadas.Oanda.v20;
     opens istvangergo.javaeloadas.Oanda.v20.account;
     opens istvangergo.javaeloadas.Oanda.v20.pricing;

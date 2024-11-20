@@ -2,7 +2,8 @@ package istvangergo.javaeloadas.DBHandler;
 
 import istvangergo.javaeloadas.Model.*;
 import javafx.beans.property.BooleanProperty;
-import net.bytebuddy.dynamic.scaffold.MethodRegistry;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ public class CRUDApp {
         statement = connection.createStatement();
     }
 
-    private List<Animal> getTableContents(ResultSet resultSet) throws SQLException {
-        List<Animal> animals = new ArrayList<>();
+    private ObservableList<Animal> getTableContents(ResultSet resultSet) throws SQLException {
+        ObservableList<Animal> animals = FXCollections.observableArrayList();
         Map<Integer, Category> categoryMap = new HashMap<>();
         Map<Integer, Value> valueMap = new HashMap<>();
         while (resultSet.next()) {
@@ -40,7 +41,7 @@ public class CRUDApp {
         return animals;
     }
 
-    public List<Animal> getAll() {
+    public ObservableList<Animal> getAll() {
         try {
             connect();
             ResultSet resultSet = statement.executeQuery("Select Animal.ID, Animal.Name, Year, Category.CategoryID, CategoryName, Value.ValueID, Value.Forint\n" +
@@ -137,17 +138,18 @@ public class CRUDApp {
             connect();
             StringBuilder query = new StringBuilder("UPDATE Animal SET ");
             if(_name != null && !_name.isEmpty()){
-                query.append(" Name = \"").append(_name).append("\"");
+                query.append(" Name = \"").append(_name).append("\"").append(",");
             }
             if(_value != null){
-                query.append(" ValueID =").append(_value.getId());
+                query.append(" ValueID =").append(_value.getId()).append(",");
             }
             if(!_year.isEmpty()){
-                query.append(" Year =").append(_year);
+                query.append(" Year =").append(_year).append(",");
             }
             if(_category != null){
-                query.append(" CategoryID =").append(_category.getId());
+                query.append(" CategoryID =").append(_category.getId()).append(",");
             }
+            query.delete(query.length()-1, query.length());
             query.append(" WHERE ID = ").append(_id);
             Integer rows = statement.executeUpdate(query.toString());
             return rows == 1;
