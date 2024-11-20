@@ -1,5 +1,6 @@
 package istvangergo.javaeloadas.Controller;
 
+import istvangergo.javaeloadas.Model.Category;
 import istvangergo.javaeloadas.Model.HistoricRate;
 import istvangergo.javaeloadas.Oanda.v20.ContextBuilder;
 import istvangergo.javaeloadas.Oanda.v20.instrument.Candlestick;
@@ -27,19 +28,25 @@ import istvangergo.javaeloadas.Oanda.v20.Context;
 import istvangergo.javaeloadas.Oanda.v20.account.AccountID;
 import istvangergo.javaeloadas.Oanda.v20.account.AccountSummary;
 import javafx.event.ActionEvent;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.StringConverter;
 
 import static istvangergo.javaeloadas.Oanda.v20.instrument.CandlestickGranularity.H1;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 
 public class OandaWindow {
+    /* Pozíció nyitás */
     @FXML
     private TableView<Trade> openPositions;
     @FXML
@@ -79,7 +86,12 @@ public class OandaWindow {
     private DatePicker historicTo;
     @FXML
     private ComboBox<String> currencyPairsHistoric;
-
+    @FXML
+    public ScatterChart<String, Number> historicChart;
+    @FXML
+    public CategoryAxis xAxis;
+    @FXML
+    public NumberAxis yAxis;
     /* Számlaadatok */
     @FXML
     private TextArea accountDetails;
@@ -110,7 +122,6 @@ public class OandaWindow {
         openUnit.setCellValueFactory(new PropertyValueFactory<>("currentUnits"));
         openPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         openUnrealizedpl.setCellValueFactory(new PropertyValueFactory<>("unrealizedPL"));
-
     }
 
     public void getAccountDetails(ActionEvent actionEvent) {
@@ -150,14 +161,25 @@ public class OandaWindow {
             String instrument = currencyPairsHistoric.getValue();
             InstrumentCandlesRequest request = new InstrumentCandlesRequest(new
                     InstrumentName( instrument ));
+            request.setPrice("M");
             request.setGranularity(H1);
             request.setFrom(String.valueOf(historicFrom.getValue()));
             request.setTo(String.valueOf(historicTo.getValue()));
             InstrumentCandlesResponse resp = ctx.instrument.candles(request);
+
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName(instrument);
+            ObservableList<XYChart.Data<String,Number>> seriesData = FXCollections.observableArrayList();
             for (Candlestick candle : resp.getCandles())
             {
+                String dateTime = ZonedDateTime.parse(candle.getTime()).toString();
+                double rate = candle.getMid().getC().doubleValue();
+                seriesData.add(new XYChart.Data<String,Number>(dateTime, rate));
                 rates.add(new HistoricRate(candle.getTime(),candle.getMid().getC().toString()));
             }
+            series.setData(seriesData);
+            historicChart.getData().add(series);
+
             historicTable.setItems(rates);
         } catch (Exception e) {
             e.printStackTrace();

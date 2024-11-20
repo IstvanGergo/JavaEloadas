@@ -3,6 +3,9 @@
 <?import javafx.scene.control.*?>
 
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.chart.ScatterChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.CategoryAxis?>
 <TabPane xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          fx:controller="istvangergo.javaeloadas.Controller.OandaWindow"
@@ -23,15 +26,23 @@
     <Tab text="Historikus Árak" closable="false">
         <VBox spacing="15.0" alignment="CENTER">
             <ComboBox fx:id="currencyPairsHistoric" promptText="Devizapár választása"/>
-            <Button onAction="#getHistoricData" text="Historikus árak kiírása"/>
             <DatePicker fx:id="historicFrom" promptText="Nyitó dátum"/>
             <DatePicker fx:id="historicTo" promptText="Záró dátum" />
+            <Button onAction="#getHistoricData" text="Historikus árak kiírása"/>
             <TableView fx:id="historicTable">
                 <columns>
                     <TableColumn text="Dátum" fx:id="historicDate"/>
                     <TableColumn text="Érték" fx:id="historicRate"/>
                 </columns>
             </TableView>
+            <ScatterChart fx:id="historicChart">
+                <xAxis>
+                    <CategoryAxis fx:id="xAxis" label="Dátum"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis fx:id="yAxis" label="Érték"/>
+                </yAxis>
+            </ScatterChart>
         </VBox>
     </Tab>
     <Tab text="Pozíció nyitás" closable="false">
