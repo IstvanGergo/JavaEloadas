@@ -1,12 +1,11 @@
 package istvangergo.javaeloadas.Model;
 
-import java.util.Currency;
-
 public class Valuta {
     private Float value;
-    private Currency currency;
+    private String currency;
     private Integer rate;
-    public Valuta(Float value, Currency currency, Integer rate) {
+
+    public Valuta(Float value, String currency, Integer rate) {
         this.value = value;
         this.currency = currency;
         this.rate = rate;
@@ -17,7 +16,8 @@ public class Valuta {
     public Integer getRate() {
         return rate;
     }
-    public Currency getCurrency() {
+    public String getCurrency() {
         return currency;
     }
+
 }

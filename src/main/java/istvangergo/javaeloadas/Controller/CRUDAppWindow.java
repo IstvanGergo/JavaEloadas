@@ -108,16 +108,16 @@ public class CRUDAppWindow {
         deleteIDs.setItems(animals);
     }
 
-    private void tableSetter(TableColumn<Animal, Integer> idColumnFiltered,
-                             TableColumn<Animal, String> nameColumnFiltered,
-                             TableColumn<Animal, Integer> yearColumnFiltered,
-                             TableColumn<Animal, String> categoryColumnFiltered,
-                             TableColumn<Animal, Integer> valueColumnFiltered) {
-        idColumnFiltered.setCellValueFactory(new PropertyValueFactory<>("id"));
-        nameColumnFiltered.setCellValueFactory(new PropertyValueFactory<>("name"));
-        yearColumnFiltered.setCellValueFactory(new PropertyValueFactory<>("year"));
-        categoryColumnFiltered.setCellValueFactory(new PropertyValueFactory<>("categoryName"));
-        valueColumnFiltered.setCellValueFactory(new PropertyValueFactory<>("Forint"));
+    private void tableSetter(TableColumn<Animal, Integer> _idColumn,
+                             TableColumn<Animal, String> _nameColumn,
+                             TableColumn<Animal, Integer> _yearColumn,
+                             TableColumn<Animal, String> _categoryColumn,
+                             TableColumn<Animal, Integer> _valueColumn) {
+        _idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        _nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        _yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
+        _categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryName"));
+        _valueColumn.setCellValueFactory(new PropertyValueFactory<>("Forint"));
     }
     public void initialize(){
         tableSetter(idColumn, nameColumn, yearColumn, categoryColumn, valueColumn);
@@ -128,23 +128,25 @@ public class CRUDAppWindow {
         populateAnimalIDs();
     }
     @FXML
-    public void updateAnimalIDs(){
-        populateAnimalIDs();
-    }
-    @FXML
     protected void insert(){
        Value selectedValue = valueToInsert.getValue();
        Category selectedCategory = categoryToInsert.getValue();
-       boolean success = crudApp.insert(nameToInsert.getText(), selectedValue.getId(), Integer.parseInt(yearToInsert.getText()), selectedCategory.getId());
+       int year;
+       if(yearToInsert.getText().isEmpty()){
+           year = 0;
+       }
+       else{
+           year = Integer.parseInt(yearToInsert.getText());
+       }
+       boolean success = crudApp.insert(nameToInsert.getText(), selectedValue.getId(), year, selectedCategory.getId());
         if (success) {
-            // Show success message
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            populateAnimalIDs();
             successAlert.setTitle("Sikeres írás");
             successAlert.setHeaderText(null);
             successAlert.setContentText("Állat sikeresen hozzáadva!");
             successAlert.showAndWait();
         } else {
-            // Show failure message
             Alert failureAlert = new Alert(Alert.AlertType.WARNING);
             failureAlert.setTitle("Sikertelen írás");
             failureAlert.setHeaderText(null);
@@ -157,7 +159,7 @@ public class CRUDAppWindow {
         Value selectedValue = modifiedValue.getValue();
         Category selectedCategory = modifiedCategory.getValue();
         Animal selectedAnimal = animalIDs.getValue();
-        boolean success = crudApp.modify(selectedAnimal.getId(),modifiedName.getText(),selectedValue,modifiedYear.getText(),selectedCategory);
+        boolean success = crudApp.modify(selectedAnimal.getId(), modifiedName.getText(), selectedValue, modifiedYear.getText(), selectedCategory);
         if (success) {
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
             successAlert.setTitle("Sikeres módosítás");
@@ -178,6 +180,7 @@ public class CRUDAppWindow {
         Animal deletedAnimal = crudApp.delete(selectedAnimal.getId());
         if(deletedAnimal != null){
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            populateAnimalIDs();
             successAlert.setTitle("Sikeres törlés");
             successAlert.setHeaderText(null);
             successAlert.setContentText(deletedAnimal.getName() + " nevű állat sikeresen törölve");
@@ -192,21 +195,22 @@ public class CRUDAppWindow {
             failureAlert.showAndWait();
         }
     }
+
     @FXML
     protected void getFiltered(){
         List<Integer> selectedValues = new ArrayList<>();
-        for( CheckBox value : valueCheckBoxes){
+        for(CheckBox value : valueCheckBoxes){
             if(value.isSelected()){
                 selectedValues.add(Integer.valueOf(value.getText()));
-
             }
         }
-        List<Animal> animalList =  crudApp.getFiltered( animalName.getText(), isYearAvailable.selectedProperty(), selectedValues, animalCategory.getValue());
+        List<Animal> animalList =  crudApp.getFiltered( animalName.getText(),
+                isYearAvailable.selectedProperty(), selectedValues, animalCategory.getValue());
         filteredTableView.getItems().setAll(animalList);
     }
 
     public void getAll() {
-        List<Animal> animalList =  crudApp.getAll();
-        animalTableView.getItems().setAll(animalList);
+        ObservableList<Animal> animalList =  crudApp.getAll();
+        animalTableView.setItems(animalList);
     }
 }

@@ -44,7 +44,8 @@ public class CRUDApp {
     public ObservableList<Animal> getAll() {
         try {
             connect();
-            ResultSet resultSet = statement.executeQuery("Select Animal.ID, Animal.Name, Year, Category.CategoryID, CategoryName, Value.ValueID, Value.Forint\n" +
+            ResultSet resultSet = statement.executeQuery(
+                    "Select Animal.ID, Animal.Name, Year, Category.CategoryID, CategoryName, Value.ValueID, Value.Forint\n" +
                     "from Animal\n" +
                     "JOIN Category on Animal.CategoryID = Category.CategoryID\n" +
                     "JOIN Value on Animal.ValueID = Value.ValueID");
@@ -58,7 +59,8 @@ public class CRUDApp {
     public List<Animal> getFiltered(String _animalNameContains, BooleanProperty _isYearAvailable, List<Integer> _values, String _category ){
         try{
             connect();
-            StringBuilder query = new StringBuilder("Select Animal.ID, Animal.Name, Year, Category.CategoryID, CategoryName, Value.ValueID, Value.Forint\n" +
+            StringBuilder query = new StringBuilder(
+                    "Select Animal.ID, Animal.Name, Year, Category.CategoryID, CategoryName, Value.ValueID, Value.Forint\n" +
                     "from Animal\n" +
                     "JOIN Category on Animal.CategoryID = Category.CategoryID\n" +
                     "JOIN Value on Animal.ValueID = Value.ValueID\n" +
@@ -68,6 +70,7 @@ public class CRUDApp {
             }
             if(_values != null && !_values.isEmpty()){
                 query.append(" AND Value.Forint = ").append(_values.get(0));
+                _values.remove(0);
                 for (Integer value : _values) {
                         query.append(" OR Value.Forint = ").append(value);
                     }
@@ -92,7 +95,7 @@ public class CRUDApp {
             List<Value> values = new ArrayList<>();
             ResultSet rs = statement.executeQuery("SELECT * FROM Value");
             while (rs.next()) {
-                Value value = new Value(rs.getInt("ValueID"), rs.getInt("Forint")); // Assuming 'name' is a column
+                Value value = new Value(rs.getInt("ValueID"), rs.getInt("Forint"));
                 values.add(value);
             }
             return values;
@@ -108,7 +111,7 @@ public class CRUDApp {
             List<Category> categories = new ArrayList<>();
             ResultSet rs = statement.executeQuery("SELECT * FROM Category");
             while (rs.next()) {
-                Category category = new Category(rs.getInt("CategoryID"), rs.getString("CategoryName")); // Assuming 'name' is a column
+                Category category = new Category(rs.getInt("CategoryID"), rs.getString("CategoryName"));
                 categories.add(category);
             }
             return categories;
@@ -151,7 +154,7 @@ public class CRUDApp {
             }
             query.delete(query.length()-1, query.length());
             query.append(" WHERE ID = ").append(_id);
-            Integer rows = statement.executeUpdate(query.toString());
+            int rows = statement.executeUpdate(query.toString());
             return rows == 1;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -160,7 +163,8 @@ public class CRUDApp {
     }
     public Animal delete(Integer _id) {
         try{
-        PreparedStatement preparedStatement = connection.prepareStatement("Select Animal.ID, Animal.Name, Year, Category.CategoryID, CategoryName, Value.ValueID, Value.Forint\n" +
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "Select Animal.ID, Animal.Name, Year, Category.CategoryID, CategoryName, Value.ValueID, Value.Forint\n" +
                 "from Animal\n" +
                 "JOIN Category on Animal.CategoryID = Category.CategoryID\n" +
                 "JOIN Value on Animal.ValueID = Value.ValueID\n" +

@@ -6,6 +6,7 @@ import java.util.List;
 public class MNB {
     private List<Valuta> currencyList;
     private LocalDate date;
+
     public List<Valuta> getCurrencyList() {
         return currencyList;
     }

@@ -11,8 +11,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainApp extends Application {
-    public Button oandaButton;
-    public Button soapClientButton;
+    @FXML
+    private Button oandaButton;
+    @FXML
+    private Button soapClientButton;
     @FXML
     private Button threadHandlingButton;
     @FXML
@@ -23,6 +25,7 @@ public class MainApp extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("View/ThreadWindow.fxml"));
         Parent root = loader.load();
         Stage stage = new Stage();
+        stage.setTitle("Thread Handling");
         stage.setScene(new Scene(root));
         stage.show();
         }
@@ -36,6 +39,7 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("View/CRUDAppWindow.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
+            stage.setTitle("CRUD App");
             stage.setScene(new Scene(root));
             stage.show();
         }
@@ -49,6 +53,7 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("View/SOAPClientWindow.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
+            stage.setTitle("SOAP Client");
             stage.setScene(new Scene(root));
             stage.show();
         }
@@ -62,6 +67,7 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("View/OandaWindow.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
+            stage.setTitle("Forex Menu");
             stage.setScene(new Scene(root));
             stage.show();
         }
@@ -71,12 +77,8 @@ public class MainApp extends Application {
     }
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("JavaFX App");
-
-        // Load FXML layout
+        primaryStage.setTitle("István Gergő");
         Parent root = FXMLLoader.load(getClass().getResource("View/main.fxml"));
-
-        // Set the main scene
         Scene mainScene = new Scene(root, 300, 200);
         primaryStage.setScene(mainScene);
         primaryStage.show();

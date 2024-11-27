@@ -179,7 +179,6 @@ public class OandaWindow {
             }
             series.setData(seriesData);
             historicChart.getData().add(series);
-
             historicTable.setItems(rates);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -10,13 +7,29 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="istvangergo.javaeloadas.Controller.SOAPClientWindow"
             prefHeight="400.0" prefWidth="600.0">
-    <Tab text="letöltés" closable="false">
-        <Button text="Összes adat megjelenítése" onAction="#getAll"/>
-        <TableView>
 
-        </TableView>
+    <Tab text="letöltés" closable="false">
+        <VBox>
+            <HBox alignment="CENTER">
+                <Button text="Összes adat megjelenítése" onAction="#getAll"/>
+            </HBox>
+            <TableView fx:id="MNBtable">
+            </TableView>
+        </VBox>
     </Tab>
+
     <Tab text="letöltés2" closable="false">
-        <Button text="Szűrt adatok megjelenítése"/>
+        <VBox alignment="CENTER">
+            <HBox alignment="CENTER">
+                <DatePicker fx:id="beginDatePicker" promptText="Kezdete"/>
+                <DatePicker fx:id="endDatePicker" promptText="Vége"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <RadioButton fx:id="currencySelection" text="Deviza választás"/>
+                <ComboBox fx:id="currenciesComboBox" promptText="Válassz devizát"/>
+            </HBox>
+            <Button text="Szűrt adatok megjelenítése" onAction="#getFiltered"/>
+            <TableView fx:id="FilteredMNBtable"/>
+        </VBox>
     </Tab>
 </TabPane>
