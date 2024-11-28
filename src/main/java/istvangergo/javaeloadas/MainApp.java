@@ -26,7 +26,7 @@ public class MainApp extends Application {
         Parent root = loader.load();
         Stage stage = new Stage();
         stage.setTitle("Thread Handling");
-        stage.setScene(new Scene(root));
+        stage.setScene(new Scene(root,300,200));
         stage.show();
         }
         catch (IOException e) {
@@ -54,7 +54,7 @@ public class MainApp extends Application {
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("SOAP Client");
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root,800,600));
             stage.show();
         }
         catch (IOException e) {
@@ -68,7 +68,7 @@ public class MainApp extends Application {
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Forex Menu");
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root,800,600));
             stage.show();
         }
         catch (IOException e) {

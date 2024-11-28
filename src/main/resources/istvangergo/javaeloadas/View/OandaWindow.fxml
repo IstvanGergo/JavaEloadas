@@ -13,6 +13,16 @@
     <Tab text="Számlainformációk" closable="false">
         <VBox spacing="15.0" alignment="CENTER">
             <Button onAction="#getAccountDetails" text="Számlaadatok kiírása"/>
+            <TableView fx:id="accountInfo">
+                <columns>
+                    <TableColumn fx:id="accountID" text="ID"/>
+                    <TableColumn fx:id="accountBalance" text="Balance"/>
+                    <TableColumn fx:id="accountCurrency" text="Currency"/>
+                    <TableColumn fx:id="accountOpenTrades" text="Open Trades"/>
+                    <TableColumn fx:id="accountOpenPositions" text="Open Positions"/>
+                    <TableColumn fx:id="accountLastTransaction" text="Last Transaction's ID"/>
+                </columns>
+            </TableView>
             <TextArea fx:id="accountDetails"/>
         </VBox>
     </Tab>
@@ -45,7 +55,7 @@
             </ScatterChart>
         </VBox>
     </Tab>
-    <Tab text="Pozíció nyitás" closable="false">
+    <Tab text="Pozíció Nyitás" closable="false">
         <VBox spacing="15.0" alignment="CENTER">
             <ComboBox fx:id="currencyPairsOpen" promptText="Devizapár választása"/>
             <ComboBox fx:id="amount" promptText="Mennyiség választása"/>
@@ -54,13 +64,13 @@
             <TextArea fx:id="openTextArea"/>
         </VBox>
     </Tab>
-    <Tab text="Pozíció zárás" closable="false">
+    <Tab text="Pozíció Zárás" closable="false">
         <VBox spacing="15.0" alignment="CENTER">
             <TextField fx:id="positionID" promptText="Pozíció tradeID-je"/>
             <Button onAction="#closePosition" text="Pozíció zárása"/>
         </VBox>
     </Tab>
-    <Tab text="Nyitott pozicíók" closable="false" >
+    <Tab text="Nyitott Pozicíók" closable="false" >
         <VBox spacing="15.0" alignment="CENTER">
             <Button onAction="#getOpenPositions" text="Nyitott pozíciók kilistázása"/>
             <TableView fx:id="openPositions">

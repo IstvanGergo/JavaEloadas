@@ -56,7 +56,6 @@ public class CRUDAppWindow {
     private CheckBox halfMillion;
     @FXML
     private CheckBox oneMillion;
-    @FXML
     private List<CheckBox> valueCheckBoxes;
 
     /* insert Table*/

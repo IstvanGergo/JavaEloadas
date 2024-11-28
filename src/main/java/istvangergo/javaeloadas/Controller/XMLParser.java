@@ -1,9 +1,5 @@
 package istvangergo.javaeloadas.Controller;
 
-import istvangergo.javaeloadas.Model.MNB;
-import istvangergo.javaeloadas.Model.Valuta;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,53 +12,33 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class XMLParser {
-
-    public static ObservableList<MNB> parseAll(File xmlFile) throws Exception {
-        ObservableList<MNB> list = FXCollections.observableArrayList();
+    public static Map<LocalDate, Map<String, Float>> parseAndTransform(File xmlFile) throws Exception {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
         Document document = builder.parse(xmlFile);
 
         NodeList Dates = document.getElementsByTagName("day");
-        for (int i = 0; i < Dates.getLength(); i++) {
-            Node dateNode = Dates.item(i);
-            Element dateElement = (Element) dateNode;
-            MNB data = getMnb(dateElement);
-            list.add(data);
-        }
-        return list;
+        return getTableData(Dates);
     }
 
-    public static Map<LocalDate, Map<String, Float>> parseAndTransform(File xmlFile) throws Exception {
-        ObservableList<MNB> mnbData = parseAll(xmlFile);
+    private static Map<LocalDate, Map<String, Float>> getTableData(NodeList nodes){
         Map<LocalDate, Map<String, Float>> tableData = new LinkedHashMap<>();
-        for (MNB mnb : mnbData) {
-            LocalDate date = mnb.getDate();
+        for(int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            Element dateElement = (Element) node;
+            LocalDate localDate = LocalDate.parse(dateElement.getAttribute("date"));
+            NodeList currencyList = dateElement.getElementsByTagName("Rate");
             Map<String, Float> currencyMap = new HashMap<>();
-            for (Valuta valuta : mnb.getCurrencyList()) {
-                currencyMap.put(valuta.getCurrency(), valuta.getValue() * valuta.getRate());
+            for( int j = 0; j < currencyList.getLength(); j++ ) {
+                Node currencyNode = currencyList.item(j);
+                Element currencyElement = (Element) currencyNode;
+                Integer rate = Integer.parseInt(currencyElement.getAttribute("unit"));
+                String curr = currencyElement.getAttribute("curr");
+                Float value = Float.parseFloat(currencyElement.getTextContent().trim().replace(',','.'));
+                currencyMap.put(curr, value * rate);
             }
-            tableData.put(date, currencyMap);
+            tableData.put(localDate, currencyMap);
         }
         return tableData;
     }
-
-    private static MNB getMnb(Element dateElement) {
-        LocalDate date = LocalDate.parse(dateElement.getAttribute("date"));
-        NodeList currencyList = dateElement.getElementsByTagName("Rate");
-        List<Valuta> valuták = new ArrayList<>();
-        for(int j = 0; j < currencyList.getLength(); j++) {
-            Node currencyNode = currencyList.item(j);
-            Element currencyElement = (Element) currencyNode;
-            Integer rate = Integer.parseInt(currencyElement.getAttribute("unit"));
-            String curr = currencyElement.getAttribute("curr");
-            Float value = Float.parseFloat(currencyElement.getTextContent().trim().replace(',', '.'));
-            Valuta valuta = new Valuta(value, curr,rate);
-            valuták.add(valuta);
-        }
-        MNB data = new MNB(valuták, date);
-        return data;
-    }
-
-
 }

@@ -5,9 +5,8 @@
 
 <VBox spacing="20" alignment="CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="istvangergo.javaeloadas.MainApp">
-    <Button fx:id="threadHandlingButton" text="Thread Handling" onAction="#OpenThreadHandling"/>
-
     <Button fx:id="crudAppButton" text="CRUD App" onAction="#OpenCRUDApp"/>
     <Button fx:id="soapClientButton" text="SOAP Client" onAction="#OpenSOAPClient"/>
+    <Button fx:id="threadHandlingButton" text="Thread Handling" onAction="#OpenThreadHandling"/>
     <Button fx:id="oandaButton" text="Forex menu" onAction="#OpenForexMenu"/>
 </VBox>

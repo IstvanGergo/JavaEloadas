@@ -9,8 +9,8 @@
             prefHeight="400.0" prefWidth="600.0">
 
     <Tab text="letöltés" closable="false">
-        <VBox>
-            <HBox alignment="CENTER">
+        <VBox spacing="15.0" alignment="CENTER">
+            <HBox spacing="15.0" alignment="CENTER">
                 <Button text="Összes adat megjelenítése" onAction="#getAll"/>
             </HBox>
             <TableView fx:id="MNBtable">
@@ -19,14 +19,18 @@
     </Tab>
 
     <Tab text="letöltés2" closable="false">
-        <VBox alignment="CENTER">
+        <VBox spacing="15.0" alignment="CENTER">
             <HBox alignment="CENTER">
                 <DatePicker fx:id="beginDatePicker" promptText="Kezdete"/>
                 <DatePicker fx:id="endDatePicker" promptText="Vége"/>
             </HBox>
             <HBox alignment="CENTER">
-                <RadioButton fx:id="currencySelection" text="Deviza választás"/>
+                <RadioButton fx:id="currencySelection" text="Deviza választás" />
                 <ComboBox fx:id="currenciesComboBox" promptText="Válassz devizát"/>
+            </HBox>
+            <HBox>
+                <RadioButton fx:id="detailedSelection" text="Részletes választás" onAction="#currencyPick"/>
+                <GridPane fx:id="currencyGrid" visible="false"/>
             </HBox>
             <Button text="Szűrt adatok megjelenítése" onAction="#getFiltered"/>
             <TableView fx:id="FilteredMNBtable"/>

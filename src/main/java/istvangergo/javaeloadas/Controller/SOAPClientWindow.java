@@ -5,13 +5,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static istvangergo.javaeloadas.Controller.XMLParser.parseAndTransform;
@@ -29,6 +27,13 @@ public class SOAPClientWindow {
     DatePicker endDatePicker;
     @FXML
     RadioButton currencySelection;
+    @FXML
+    GridPane currencyGrid;
+    @FXML
+    RadioButton detailedSelection;
+
+    List<CheckBox> deviceCheckBoxes;
+
     /* Containers for initialization */
     Set<String> currencies = new HashSet<>();
     Map<LocalDate, Map<String, Float>> data;
@@ -40,42 +45,55 @@ public class SOAPClientWindow {
                 .flatMap(map -> map.keySet().stream())
                 .collect(Collectors.toSet());
         currenciesComboBox.setItems(FXCollections.observableArrayList(currencies));
+        fillCurrencyGrid();
     }
 
     public void getAll() {
+        MNBtable.getColumns().clear();
         setupTable(MNBtable,currencies);
-        populateTable(MNBtable,data);
+        ObservableList<Map.Entry<LocalDate, Map<String,Float>>> rowList = FXCollections.observableArrayList(data.entrySet());
+        MNBtable.setItems(rowList);
     }
+
     public void getFiltered(){
         String selectedCurrency = currenciesComboBox.getValue();
+        Set<String> selectedCurrencies = new HashSet<>();
         LocalDate startDate = beginDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
         if (startDate.isAfter(endDate)) {
             return;
         }
         Map<LocalDate, Map<String, Float>> filteredData;
-        if(currencySelection.isSelected()) {
         filteredData = data.entrySet().stream()
-                .filter(entry-> entry.getKey().isEqual(startDate) || entry.getKey().isAfter(startDate) && entry.getKey().isBefore(endDate))
+                .filter(entry -> entry.getKey().isEqual(startDate) ||
+                        (entry.getKey().isAfter(startDate) && entry.getKey().isBefore(endDate)))
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
                     Map<String, Float> filteredCurrencyMap = new HashMap<>();
-                    filteredCurrencyMap.put(selectedCurrency, entry.getValue().get(selectedCurrency));
-                    return filteredCurrencyMap;
-                }));
+                    if (currencySelection.isSelected()) {
+                        filteredCurrencyMap.put(selectedCurrency, entry.getValue().get(selectedCurrency));
+                    } else if(detailedSelection.isSelected()) {
+                        for (CheckBox box : deviceCheckBoxes) {
+                            if (box.isSelected()) {
+                                selectedCurrencies.add(box.getText());
+                                filteredCurrencyMap.put(box.getText(), entry.getValue().get(box.getText()));
+                            }
+                        }
+                    } else {
+                        filteredCurrencyMap.putAll(entry.getValue());
+                    }
+                    return filteredCurrencyMap; }));
+        FilteredMNBtable.getColumns().clear();
+        if(currencySelection.isSelected()) {
+            setupTable(FilteredMNBtable,Set.of(selectedCurrency));
+        }
+        else if(detailedSelection.isSelected()) {
+            setupTable(FilteredMNBtable, selectedCurrencies);
         }
         else{
-            filteredData = data.entrySet().stream()
-                    .filter(entry-> entry.getKey().isEqual(startDate) || entry.getKey().isAfter(startDate) && entry.getKey().isBefore(endDate))
-                    .filter(entry-> entry.getValue().containsKey(selectedCurrency))
-                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                        Map<String, Float> filteredCurrencyMap = new HashMap<>();
-                        filteredCurrencyMap.put(selectedCurrency, entry.getValue().get(selectedCurrency));
-                        return filteredCurrencyMap;
-                    }));
+            setupTable(FilteredMNBtable,currencies);
         }
-        setupTable(FilteredMNBtable,Set.of(selectedCurrency));
-        populateTable(FilteredMNBtable, filteredData);
-
+        ObservableList<Map.Entry<LocalDate, Map<String,Float>>> rowList = FXCollections.observableArrayList(filteredData.entrySet());
+        FilteredMNBtable.setItems(rowList);
     }
 
     public void setupTable( TableView<Map.Entry<LocalDate, Map<String, Float>>> table,
@@ -94,11 +112,30 @@ public class SOAPClientWindow {
             table.getColumns().add(currencyColumn);
         }
     }
-    public void populateTable(TableView<Map.Entry<LocalDate, Map<String, Float>>> table,
-                              Map<LocalDate, Map<String, Float>> tableData) {
-        ObservableList<Map.Entry<LocalDate, Map<String, Float>>> rows = FXCollections.observableArrayList(tableData.entrySet());
-        rows.clear();
-        rows.setAll(tableData.entrySet());
-        table.setItems(rows);
+
+    public void currencyPick() {
+        if(detailedSelection.isSelected()){
+            currencyGrid.setVisible(true);
+        }
+        else{
+            currencyGrid.setVisible(false);
+        }
+    }
+    public void fillCurrencyGrid() {
+        deviceCheckBoxes = new ArrayList<>();
+        int columns = 6;
+        int row = 0;
+        int col = 0;
+        for (String currency : currencies) {
+            CheckBox box = new CheckBox(currency);
+            box.setSelected(false);
+            deviceCheckBoxes.add(box);
+            currencyGrid.add(box, col, row);
+            col++;
+            if (col == columns) {
+                col = 0;
+                row++;
+            }
+        }
     }
 }

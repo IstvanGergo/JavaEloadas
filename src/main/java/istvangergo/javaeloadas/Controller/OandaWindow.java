@@ -1,8 +1,8 @@
 package istvangergo.javaeloadas.Controller;
 
-import istvangergo.javaeloadas.Model.Category;
 import istvangergo.javaeloadas.Model.HistoricRate;
 import istvangergo.javaeloadas.Oanda.v20.ContextBuilder;
+import istvangergo.javaeloadas.Oanda.v20.account.Account;
 import istvangergo.javaeloadas.Oanda.v20.instrument.Candlestick;
 import istvangergo.javaeloadas.Oanda.v20.instrument.InstrumentCandlesRequest;
 import istvangergo.javaeloadas.Oanda.v20.instrument.InstrumentCandlesResponse;
@@ -27,25 +27,21 @@ import javafx.fxml.FXML;
 import istvangergo.javaeloadas.Oanda.v20.Context;
 import istvangergo.javaeloadas.Oanda.v20.account.AccountID;
 import istvangergo.javaeloadas.Oanda.v20.account.AccountSummary;
-import javafx.event.ActionEvent;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.StringConverter;
 
 import static istvangergo.javaeloadas.Oanda.v20.instrument.CandlestickGranularity.H1;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
 public class OandaWindow {
+
     /* Pozíció nyitás */
     @FXML
     private TableView<Trade> openPositions;
@@ -94,12 +90,24 @@ public class OandaWindow {
     public NumberAxis yAxis;
     /* Számlaadatok */
     @FXML
-    private TextArea accountDetails;
+    private TableView<AccountSummary> accountInfo;
+    @FXML
+    private TableColumn<AccountSummary, AccountID> accountID;
+    @FXML
+    private TableColumn<AccountSummary, AccountUnits> accountBalance;
+    @FXML
+    private TableColumn<AccountSummary, Currency> accountCurrency;
+    @FXML
+    private TableColumn<AccountSummary, Long> accountOpenTrades;
+    @FXML
+    private TableColumn<AccountSummary, AccountSummary> accountOpenPositions;
+    @FXML
+    private TableColumn<AccountSummary, AccountSummary> accountLastTransaction;
+
     @FXML
     private TextArea currentPrices;
     @FXML
     private ComboBox<String> currencyPairsActual;
-
 
     public void populateComboBoxes(){
         List<String> instruments = new ArrayList<>( Arrays.asList("EUR_USD", "USD_JPY",
@@ -114,6 +122,12 @@ public class OandaWindow {
     }
     public void initialize(){
         populateComboBoxes();
+        accountID.setCellValueFactory(new PropertyValueFactory<>("id"));
+        accountBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
+        accountCurrency.setCellValueFactory(new PropertyValueFactory<>("currency"));
+        accountOpenTrades.setCellValueFactory(new PropertyValueFactory<>("openTradeCount"));
+        accountOpenPositions.setCellValueFactory(new PropertyValueFactory<>("openPositionCount"));
+        accountLastTransaction.setCellValueFactory(new PropertyValueFactory<>("lastTransactionID"));
         historicDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         historicRate.setCellValueFactory(new PropertyValueFactory<>("rate"));
         openTradeID.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -124,18 +138,18 @@ public class OandaWindow {
         openUnrealizedpl.setCellValueFactory(new PropertyValueFactory<>("unrealizedPL"));
     }
 
-    public void getAccountDetails(ActionEvent actionEvent) {
+    public void getAccountDetails() {
         try {
             Context ctx = new Context(OandaConfig.URL,OandaConfig.TOKEN);
             AccountSummary summary = ctx.account.summary(new
                     AccountID(OandaConfig.ACCOUNTID)).getAccount();
-            accountDetails.setText(summary.toString());
+            accountInfo.getItems().setAll(summary);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void getCurrentPrices(ActionEvent actionEvent) {
+    public void getCurrentPrices() {
         try {
             Context ctx = new
                     ContextBuilder(OandaConfig.URL).setToken(OandaConfig.TOKEN).setApplication("PricePolling").build();
@@ -151,13 +165,12 @@ public class OandaWindow {
         }
     }
 
-    public void getHistoricData(ActionEvent actionEvent) {
+    public void getHistoricData() {
         ObservableList<HistoricRate> rates = FXCollections.observableArrayList();
-        rates.clear();
+        historicChart.getData().clear();
         try {
             Context ctx = new
                     ContextBuilder(OandaConfig.URL).setToken(OandaConfig.TOKEN).setApplication("HistoricPrices").build();
-            AccountID accountId = OandaConfig.ACCOUNTID;
             String instrument = currencyPairsHistoric.getValue();
             InstrumentCandlesRequest request = new InstrumentCandlesRequest(new
                     InstrumentName( instrument ));
@@ -166,25 +179,22 @@ public class OandaWindow {
             request.setFrom(String.valueOf(historicFrom.getValue()));
             request.setTo(String.valueOf(historicTo.getValue()));
             InstrumentCandlesResponse resp = ctx.instrument.candles(request);
-
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName(instrument);
-            ObservableList<XYChart.Data<String,Number>> seriesData = FXCollections.observableArrayList();
-            for (Candlestick candle : resp.getCandles())
-            {
+            for (Candlestick candle : resp.getCandles()) {
                 String dateTime = ZonedDateTime.parse(candle.getTime()).toString();
                 double rate = candle.getMid().getC().doubleValue();
-                seriesData.add(new XYChart.Data<String,Number>(dateTime, rate));
-                rates.add(new HistoricRate(candle.getTime(),candle.getMid().getC().toString()));
+                series.getData().add(new XYChart.Data<>(dateTime, rate));
+                rates.add(new HistoricRate(candle.getTime(), candle.getMid().getC().toString()));
             }
-            series.setData(seriesData);
             historicChart.getData().add(series);
             historicTable.setItems(rates);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void onOpenPosition(ActionEvent actionEvent) {
+
+    public void onOpenPosition() {
         try {
             Context ctx = new
                     ContextBuilder(OandaConfig.URL).setToken(OandaConfig.TOKEN).setApplication("openPosition").build();
@@ -201,9 +211,8 @@ public class OandaWindow {
             marketorderrequest.setInstrument(currencyPairsOpen.getValue());
             if(Objects.equals(sellOrBuy.getValue(), "Short")) {
                 marketorderrequest.setUnits(-amount.getValue());
-            }
-            else {
-            marketorderrequest.setUnits(amount.getValue());
+            } else {
+                marketorderrequest.setUnits(amount.getValue());
             }
             request.setOrder(marketorderrequest);
             OrderCreateResponse response = _ctx.order.create(request);
@@ -213,21 +222,32 @@ public class OandaWindow {
         }
     }
 
-    public void closePosition(ActionEvent actionEvent) {
+    public void closePosition() {
         try{
         Context ctx = new
                 ContextBuilder(OandaConfig.URL).setToken(OandaConfig.TOKEN).setApplication("openPosition").build();
         AccountID accountId = OandaConfig.ACCOUNTID;
         ctx.trade.close(new TradeCloseRequest(accountId, new TradeSpecifier(positionID.getText())));
+        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+        successAlert.setTitle("Sikeres pozíció zárás");
+        successAlert.setHeaderText(null);
+        successAlert.setContentText(positionID.getText() + " sikeresen lezárva!");
+        successAlert.showAndWait();
+        positionID.setText("");
         }
         catch (Exception e) {
+            Alert failureAlert = new Alert(Alert.AlertType.WARNING);
+            failureAlert.setTitle("Sikertelen pozíció zárás");
+            failureAlert.setHeaderText(null);
+            failureAlert.setContentText(positionID.getText() + " ID-jű pozíció nem létezik!");
+            failureAlert.showAndWait();
+            positionID.setText("");
             e.printStackTrace();
         }
     }
 
-    public void getOpenPositions(ActionEvent actionEvent) {
+    public void getOpenPositions() {
         ObservableList<Trade> trades = FXCollections.observableArrayList();
-        trades.clear();
         try {
             Context ctx = new
                     ContextBuilder(OandaConfig.URL).setToken(OandaConfig.TOKEN).setApplication("openPosition").build();
